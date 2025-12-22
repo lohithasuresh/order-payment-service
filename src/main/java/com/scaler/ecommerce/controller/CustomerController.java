@@ -1,7 +1,7 @@
 package com.scaler.ecommerce.controller;
 
 import com.scaler.ecommerce.dto.CreateCustomerRequestDTO;
-import com.scaler.ecommerce.entity.Customer;
+import com.scaler.ecommerce.dto.CustomerDTO;
 import com.scaler.ecommerce.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +17,19 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public Customer createCustomer(
+    public CustomerDTO createCustomer(
             @Valid @RequestBody CreateCustomerRequestDTO request
     ) {
         return customerService.createCustomer(request);
     }
 
     @GetMapping
-    public List<Customer> getAllCustomers() {
+    public List<CustomerDTO> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable Long id) {
+    public CustomerDTO getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id);
     }
 }

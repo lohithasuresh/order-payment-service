@@ -1,14 +1,17 @@
 package com.scaler.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scaler.ecommerce.enums.TransactionType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
+@Entity
 @Table(name = "transactions")
+@Schema(hidden = true)
 public class Transaction {
 
     @Id
@@ -24,5 +27,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
+    @JsonIgnore
+    @Schema(hidden = true)
     private Payment payment;
 }

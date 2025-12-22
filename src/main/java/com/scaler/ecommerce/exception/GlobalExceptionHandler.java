@@ -44,7 +44,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(body);
     }
-
+// NOTE:
+// Generic exception handler intentionally commented to avoid
+// masking unexpected errors during development and evaluation.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
 

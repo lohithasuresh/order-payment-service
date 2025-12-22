@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +33,15 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO makePayment(Long orderId, CreatePaymentRequestDTO request) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+                .orElseThrow(() ->
+                        new OrderNotFoundException("Order not found with id " + orderId));
 
         if (paymentRepository.existsByOrderId(orderId)) {
-            throw new PaymentAlreadyExistsException("Payment already exists");
+            throw new PaymentAlreadyExistsException("Payment already exists for this order");
         }
 
         if (order.getStatus() != OrderStatus.PENDING) {
-            throw new PaymentAlreadyExistsException("Order already processed");
+            throw new PaymentAlreadyExistsException("Order already completed or cancelled");
         }
 
         Payment payment = new Payment();
@@ -66,9 +68,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentDTO> getAllPayments() {
-        return paymentRepository.findAll().stream()
+        return paymentRepository.findAll()
+                .stream()
                 .map(this::mapToDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private PaymentDTO mapToDTO(Payment payment) {
@@ -78,7 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getPaymentDate(),
                 payment.getStatus(),
                 payment.getMethod(),
-                payment.getOrder().getId()
+                payment.getOrder() != null ? payment.getOrder().getId() : null
         );
     }
 }

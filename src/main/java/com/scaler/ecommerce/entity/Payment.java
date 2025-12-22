@@ -1,7 +1,9 @@
 package com.scaler.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scaler.ecommerce.enums.PaymentMethod;
 import com.scaler.ecommerce.enums.PaymentStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "payments")
+@Schema(hidden = true)
 public class Payment {
 
     @Id
@@ -28,5 +31,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "order_id", unique = true)
+    @JsonIgnore
+    @Schema(hidden = true)
     private Order order;
 }
