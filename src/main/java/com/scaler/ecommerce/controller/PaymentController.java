@@ -1,6 +1,6 @@
 package com.scaler.ecommerce.controller;
 
-import com.scaler.ecommerce.entity.Payment;
+import com.scaler.ecommerce.dto.PaymentDTO;
 import com.scaler.ecommerce.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +15,15 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/{orderId}")
-    public Payment makePayment(
+    public PaymentDTO makePayment(
             @PathVariable Long orderId,
-            @RequestBody Payment payment
+            @RequestBody PaymentDTO paymentRequest
     ) {
-        return paymentService.makePayment(orderId, payment);
+        return paymentService.makePayment(orderId, paymentRequest);
     }
 
     @GetMapping
-    public List<Payment> getAllPayments() {
+    public List<PaymentDTO> getAllPayments() {
         return paymentService.getAllPayments();
     }
 }

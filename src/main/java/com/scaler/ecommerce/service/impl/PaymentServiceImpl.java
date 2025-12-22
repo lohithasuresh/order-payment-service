@@ -1,5 +1,6 @@
 package com.scaler.ecommerce.service.impl;
 
+import com.scaler.ecommerce.dto.PaymentDTO;
 import com.scaler.ecommerce.entity.Order;
 import com.scaler.ecommerce.entity.Payment;
 import com.scaler.ecommerce.entity.Transaction;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final TransactionRepository transactionRepository;
 
     @Override
-    public Payment makePayment(Long orderId, Payment paymentRequest) {
+    public PaymentDTO makePayment(Long orderId, PaymentDTO paymentRequest) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id " + orderId));
@@ -40,34 +42,44 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentAlreadyExistsException("Order already completed or cancelled");
         }
 
-        // Create payment safely
         Payment payment = new Payment();
         payment.setOrder(order);
-        payment.setAmount(order.getAmount()); // 🔐 secure
+        payment.setAmount(order.getAmount());
         payment.setMethod(paymentRequest.getMethod());
         payment.setStatus(PaymentStatus.SUCCESS);
         payment.setPaymentDate(LocalDateTime.now());
 
         Payment savedPayment = paymentRepository.save(payment);
 
-        // Update order status
         order.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
 
-        // Create transaction
         Transaction transaction = new Transaction();
         transaction.setAmount(order.getAmount());
         transaction.setType(TransactionType.DEBIT);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setPayment(savedPayment);
-
         transactionRepository.save(transaction);
 
-        return savedPayment;
+        return mapToDTO(savedPayment);
     }
 
     @Override
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
+    public List<PaymentDTO> getAllPayments() {
+        return paymentRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private PaymentDTO mapToDTO(Payment payment) {
+        return new PaymentDTO(
+                payment.getId(),
+                payment.getAmount(),
+                payment.getPaymentDate(),
+                payment.getStatus(),
+                payment.getMethod(),
+                payment.getOrder() != null ? payment.getOrder().getId() : null
+        );
     }
 }

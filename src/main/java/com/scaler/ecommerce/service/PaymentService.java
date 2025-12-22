@@ -1,11 +1,10 @@
 package com.scaler.ecommerce.service;
 
-import com.scaler.ecommerce.entity.Order;
-import com.scaler.ecommerce.entity.Payment;
+import com.scaler.ecommerce.dto.PaymentDTO;
 
 import java.util.List;
 
 public interface PaymentService {
-    Payment makePayment(Long orderId, Payment payment);
-    List<Payment> getAllPayments();
+    PaymentDTO makePayment(Long orderId, PaymentDTO paymentRequest);
+    List<PaymentDTO> getAllPayments();
 }
