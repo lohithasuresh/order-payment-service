@@ -1,5 +1,6 @@
 package com.scaler.ecommerce.service.impl;
 
+import com.scaler.ecommerce.dto.CreateOrderRequestDTO;
 import com.scaler.ecommerce.dto.OrderDTO;
 import com.scaler.ecommerce.entity.Customer;
 import com.scaler.ecommerce.entity.Order;
@@ -22,13 +23,18 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public OrderDTO createOrderForCustomer(Long customerId, Order order) {
+    public OrderDTO createOrderForCustomer(Long customerId, CreateOrderRequestDTO request) {
+
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
+        Order order = new Order();
+        order.setAmount(request.getAmount());
+        order.setDescription(request.getDescription());
         order.setCustomer(customer);
         order.setStatus(OrderStatus.PENDING);
         order.setOrderDate(LocalDateTime.now());
+
         Order savedOrder = orderRepository.save(order);
 
         return mapToDTO(savedOrder);
@@ -36,7 +42,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getAllOrders() {
-        return orderRepository.findAll().stream()
+        return orderRepository.findAll()
+                .stream()
                 .map(this::mapToDTO)
                 .toList();
     }
@@ -44,12 +51,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found with id " + orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
         order.setStatus(status);
-        Order updatedOrder = orderRepository.save(order);
-
-        return mapToDTO(updatedOrder);
+        return mapToDTO(orderRepository.save(order));
     }
 
     private OrderDTO mapToDTO(Order order) {
@@ -59,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getDescription(),
                 order.getOrderDate(),
                 order.getStatus(),
-                order.getCustomer() != null ? order.getCustomer().getId() : null
+                order.getCustomer().getId()
         );
     }
 }

@@ -1,7 +1,9 @@
 package com.scaler.ecommerce.controller;
 
+import com.scaler.ecommerce.dto.CreatePaymentRequestDTO;
 import com.scaler.ecommerce.dto.PaymentDTO;
 import com.scaler.ecommerce.service.PaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,9 @@ public class PaymentController {
     @PostMapping("/{orderId}")
     public PaymentDTO makePayment(
             @PathVariable Long orderId,
-            @RequestBody PaymentDTO paymentRequest
+            @Valid @RequestBody CreatePaymentRequestDTO request
     ) {
-        return paymentService.makePayment(orderId, paymentRequest);
+        return paymentService.makePayment(orderId, request);
     }
 
     @GetMapping

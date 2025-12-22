@@ -1,9 +1,10 @@
 package com.scaler.ecommerce.controller;
 
+import com.scaler.ecommerce.dto.CreateOrderRequestDTO;
 import com.scaler.ecommerce.dto.OrderDTO;
 import com.scaler.ecommerce.enums.OrderStatus;
-import com.scaler.ecommerce.entity.Order;
 import com.scaler.ecommerce.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ public class OrderController {
     @PostMapping("/customer/{customerId}")
     public OrderDTO createOrderForCustomer(
             @PathVariable Long customerId,
-            @RequestBody Order order) {
-        return orderService.createOrderForCustomer(customerId, order);
+            @Valid @RequestBody CreateOrderRequestDTO request
+    ) {
+        return orderService.createOrderForCustomer(customerId, request);
     }
 
     @GetMapping
@@ -31,7 +33,8 @@ public class OrderController {
     @PutMapping("/{orderId}/status")
     public OrderDTO updateOrderStatus(
             @PathVariable Long orderId,
-            @RequestParam OrderStatus status) {
+            @RequestParam OrderStatus status
+    ) {
         return orderService.updateOrderStatus(orderId, status);
     }
 }

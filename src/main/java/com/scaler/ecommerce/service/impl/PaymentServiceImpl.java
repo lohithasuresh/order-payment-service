@@ -1,5 +1,6 @@
 package com.scaler.ecommerce.service.impl;
 
+import com.scaler.ecommerce.dto.CreatePaymentRequestDTO;
 import com.scaler.ecommerce.dto.PaymentDTO;
 import com.scaler.ecommerce.entity.Order;
 import com.scaler.ecommerce.entity.Payment;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,23 +29,23 @@ public class PaymentServiceImpl implements PaymentService {
     private final TransactionRepository transactionRepository;
 
     @Override
-    public PaymentDTO makePayment(Long orderId, PaymentDTO paymentRequest) {
+    public PaymentDTO makePayment(Long orderId, CreatePaymentRequestDTO request) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found with id " + orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
         if (paymentRepository.existsByOrderId(orderId)) {
-            throw new PaymentAlreadyExistsException("Payment already exists for this order");
+            throw new PaymentAlreadyExistsException("Payment already exists");
         }
 
         if (order.getStatus() != OrderStatus.PENDING) {
-            throw new PaymentAlreadyExistsException("Order already completed or cancelled");
+            throw new PaymentAlreadyExistsException("Order already processed");
         }
 
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
-        payment.setMethod(paymentRequest.getMethod());
+        payment.setMethod(request.getMethod());
         payment.setStatus(PaymentStatus.SUCCESS);
         payment.setPaymentDate(LocalDateTime.now());
 
@@ -66,10 +66,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentDTO> getAllPayments() {
-        return paymentRepository.findAll()
-                .stream()
+        return paymentRepository.findAll().stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private PaymentDTO mapToDTO(Payment payment) {
@@ -79,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getPaymentDate(),
                 payment.getStatus(),
                 payment.getMethod(),
-                payment.getOrder() != null ? payment.getOrder().getId() : null
+                payment.getOrder().getId()
         );
     }
 }

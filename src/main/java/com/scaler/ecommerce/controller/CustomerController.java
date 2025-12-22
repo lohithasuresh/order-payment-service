@@ -1,7 +1,9 @@
 package com.scaler.ecommerce.controller;
 
+import com.scaler.ecommerce.dto.CreateCustomerRequestDTO;
 import com.scaler.ecommerce.entity.Customer;
 import com.scaler.ecommerce.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +17,10 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    public Customer createCustomer(
+            @Valid @RequestBody CreateCustomerRequestDTO request
+    ) {
+        return customerService.createCustomer(request);
     }
 
     @GetMapping
