@@ -18,17 +18,20 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double amount;
 
+    @Column(nullable = false)
     private String description;
 
     private LocalDateTime orderDate = LocalDateTime.now();
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     @JsonIgnore
     @Schema(hidden = true)
     private Customer customer;

@@ -19,6 +19,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double amount;
 
     private LocalDateTime paymentDate = LocalDateTime.now();
@@ -30,7 +31,7 @@ public class Payment {
     private PaymentMethod method;
 
     @OneToOne
-    @JoinColumn(name = "order_id", unique = true)
+    @JoinColumn(name = "order_id", unique = true, nullable = false)
     @JsonIgnore
     @Schema(hidden = true)
     private Order order;
