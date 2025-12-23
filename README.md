@@ -1,6 +1,7 @@
 # **Order-Payment Service (Spring Boot)**
-This is a **Java Spring Boot backend service** that manages **Customers, Orders, Payments, and Transactions**.  
-The project demonstrates **clean layered architecture, DTO-based APIs, JPA relationships, validation**, and **Swagger (OpenAPI) documentation**.
+
+This is a **Java Spring Boot backend service** that manages Customers, Orders, Payments, and Transactions.  
+The project demonstrates clean layered architecture, DTO-based APIs, JPA relationships, validation, and Swagger (OpenAPI) documentation.
 ---
 ## 🚀 Features
 - Customer management (Create & Fetch customers)
